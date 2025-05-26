@@ -28,6 +28,21 @@
       margin: 10px 0;
     }
 
+    #start-button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #00ffcc;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #start-button:hover {
+      background-color: #00ddb3;
+    }
+
     #game-over {
       display: none;
       background-color: #222;
@@ -106,6 +121,8 @@
 </head>
 <body>
   <canvas id="tetris" width="300" height="600"></canvas>
+
+  <button id="start-button" onclick="startGame()">Start hry</button>
 
   <div id="score">Skóre: 0</div>
 
