@@ -272,33 +272,37 @@
       animationFrame = requestAnimationFrame(update);
     }
 
-    function startGame() {
-      cancelAnimationFrame(animationFrame);
-      const selectedSpeed = document.getElementById('level').value;
-      dropInterval = parseInt(selectedSpeed);
-      arena = createMatrix(arenaWidth, arenaHeight);
-      score = 0;
-      updateScore();
-      document.getElementById('game-over').style.display = 'none';
-      gameRunning = true;
-      playerReset();
-      update();
-    }
+   function startGame() {
+  cancelAnimationFrame(animationFrame);
+  const selectedSpeed = document.getElementById('level').value;
+  dropInterval = parseInt(selectedSpeed);
+  arena = createMatrix(arenaWidth, arenaHeight);
+  score = 0;
+  updateScore();
+  document.getElementById('game-over').style.display = 'none';
+  gameRunning = true;
+  playerReset();
+  update();
+}
 
-    document.addEventListener('keydown', event => {
-      if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
-        event.preventDefault();
-      }
+// 👇 TADY PŘIDEJ TOTO
+window.startGame = startGame;
 
-      if (!gameRunning) return;
+document.addEventListener('keydown', event => {
+  if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+    event.preventDefault();
+  }
 
-      if (event.key === 'ArrowLeft') playerMove(-1);
-      else if (event.key === 'ArrowRight') playerMove(1);
-      else if (event.key === 'ArrowDown') playerDrop();
-      else if (event.key === 'ArrowUp') playerRotate();
-    });
+  if (!gameRunning) return;
 
-    loadTopScores();
+  if (event.key === 'ArrowLeft') playerMove(-1);
+  else if (event.key === 'ArrowRight') playerMove(1);
+  else if (event.key === 'ArrowDown') playerDrop();
+  else if (event.key === 'ArrowUp') playerRotate();
+});
+
+loadTopScores();
+
   </script>
 </body>
 </html>
