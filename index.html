@@ -3,62 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <title>Tetris s online žebříčkem a e-mailem</title>
-  <style>
+<style>
     body {
       margin: 0;
       padding: 0;
+      background: #0a0a0a;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     canvas {
-      display: block;
-      margin: 0 auto;
-      border: 2px solid #fff;
+      margin-top: 20px;
+      border: 2px solid #00ffcc;
       background: transparent;
     }
-
-    #level-select, #score, #game-over, #leaderboard {
-      text-align: center;
-      margin-top: 20px;
-    }
-  
 
     #score {
       font-size: 24px;
       font-weight: bold;
       color: #00ffcc;
+      margin: 10px 0;
     }
 
     #game-over {
       display: none;
-      font-size: 18px;
-      color: #ffd700;
-      font-weight: bold;
+      background-color: #222;
+      border: 2px solid #ff0066;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 400px;
+      border-radius: 12px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    #leaderboard {
+      margin-top: 30px;
+      max-width: 400px;
+      background: #111;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    }
+
+    #leaderboard h3 {
+      color: #00ffcc;
+      margin-bottom: 10px;
+    }
+
+    #leaderboard ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #leaderboard li {
+      background: #1c1c1c;
+      padding: 8px 12px;
+      border-bottom: 1px solid #333;
+      font-size: 16px;
+    }
+
+    #mobile-controls {
+      display: none;
+      margin-top: 15px;
+      gap: 20px;
+    }
+
+    .control-button {
+      background: #111;
+      border: 2px solid #00ffcc;
+      border-radius: 10px;
+      color: #00ffcc;
+      font-size: 24px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .control-button img {
+      width: 30px;
+      height: 30px;
+    }
+
+    @media (max-width: 600px) {
+      canvas {
+        width: 90vw;
+        height: 180vw;
+      }
+      #leaderboard, #game-over {
+        width: 90vw;
+        font-size: 14px;
+      }
+      #mobile-controls {
+        display: flex;
+        justify-content: center;
+      }
     }
   </style>
 </head>
 <body>
   <canvas id="tetris" width="300" height="600"></canvas>
 
-  <div id="level-select">
-    <label for="level">Zvol úroveň: </label>
-    <select id="level">
-      <option value="800">Lehká</option>
-      <option value="500" selected>Střední</option>
-      <option value="200">Těžká</option>
-    </select>
-    <button onclick="startGame()">Spustit</button>
-  </div>
-
   <div id="score">Skóre: 0</div>
 
+  <div id="mobile-controls">
+    <button class="control-button" onclick="playerMove(-1)"><img src="https://img.icons8.com/ios-filled/50/arrow-pointing-left.png" alt="Doleva"></button>
+    <button class="control-button" onclick="playerRotate()"><img src="https://img.icons8.com/ios-filled/50/rotate-right.png" alt="Rotace"></button>
+    <button class="control-button" onclick="playerMove(1)"><img src="https://img.icons8.com/ios-filled/50/arrow-pointing-right.png" alt="Doprava"></button>
+  </div>
+
   <div id="game-over">
-    Je nám líto, ale je konec hry.<br>
-    Jako odměnu pro Vás máme slevu <strong>15 %</strong> na náš e-shop.<br>
-    Stačí zadat slevový kód: <strong>TETRIS15</strong>
+    <p>Je nám lítý, ale je konec hry.</p>
+    <p>Jako odměnu pro Vás máme slevu <strong>15 %</strong> na náš e-shop.</p>
+    <p>Stačí zadat slevový kód: <strong style="color:#00ffcc;">TETRIS15</strong></p>
   </div>
 
   <div id="leaderboard">
-    <h3>TOP hráči</h3>
+    <h3>TOP 5 Hráči</h3>
     <p>Načítám...</p>
   </div>
 
