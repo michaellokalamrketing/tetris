@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <title>Tetris s online žebříčkem a e-mailem</title>
   <style>
-   
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
     canvas {
       display: block;
@@ -87,49 +90,54 @@
       });
     }
 
-  function loadTopScores() {
-  const scoresRef = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(5));
-  get(scoresRef)
-    .then((snapshot) => {
-      const leaderboardEl = document.getElementById('leaderboard');
+    function loadTopScores() {
+      const scoresRef = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(5));
+      get(scoresRef)
+        .then((snapshot) => {
+          const leaderboardEl = document.getElementById('leaderboard');
 
-      if (!snapshot.exists()) {
-        leaderboardEl.innerHTML += '<p>Žádná skóre zatím nejsou.</p>';
-        return;
-      }
+          if (!snapshot.exists()) {
+            leaderboardEl.innerHTML += '<p>Žádná skóre zatím nejsou.</p>';
+            return;
+          }
 
-      const entries = [];
-      snapshot.forEach((child) => {
-        const data = child.val();
-        // kontrola, že data obsahují jméno a skóre
-        if (data && data.name && typeof data.score === 'number') {
-          entries.push(data);
-        }
-      });
+          const entries = [];
+          snapshot.forEach((child) => {
+            const data = child.val();
+            if (data && data.name && typeof data.score === 'number') {
+              entries.push(data);
+            }
+          });
 
-      if (entries.length === 0) {
-        leaderboardEl.innerHTML += '<p>Zatím bez výsledků.</p>';
-        return;
-      }
+          if (entries.length === 0) {
+            leaderboardEl.innerHTML += '<p>Zatím bez výsledků.</p>';
+            return;
+          }
 
-      entries.sort((a, b) => b.score - a.score);
+          entries.sort((a, b) => b.score - a.score);
 
-      const listHtml = entries.map(e => `<li>${e.name} – ${e.score} bodů</li>`).join('');
-      leaderboardEl.innerHTML = `<h3>TOP hráči</h3><ul>${listHtml}</ul>`;
-    })
-    .catch((error) => {
-      console.error("Chyba při načítání leaderboardu:", error);
-      document.getElementById('leaderboard').innerHTML += '<p>Chyba při načítání skóre.</p>';
-    });
-}
+          const listHtml = entries.map(e => `<li>${e.name} – ${e.score} bodů</li>`).join('');
+          leaderboardEl.innerHTML = `<h3>TOP hráči</h3><ul>${listHtml}</ul>`;
+        })
+        .catch((error) => {
+          console.error("Chyba při načítání leaderboardu:", error);
+          document.getElementById('leaderboard').innerHTML += '<p>Chyba při načítání skóre.</p>';
+        });
+    }
 
-    // TETRIS LOGIKA
     const canvas = document.getElementById('tetris');
     const ctx = canvas.getContext('2d');
     ctx.scale(30, 30);
 
     const tileImage = new Image();
     tileImage.src = 'https://www.flagranti.cz/images/products/0/2/5/3/9/Tanga_Ewa_Bien_Lea_C202_cerna_1659599552.jpg';
+
+    const backgroundImage = new Image();
+    backgroundImage.src = 'https://raw.githubusercontent.com/michaellokalamrketing/tetris/main/canvas.png';
+
+    backgroundImage.onload = () => {
+      draw();
+    };
 
     const arenaWidth = 10;
     const arenaHeight = 20;
@@ -157,21 +165,13 @@
         });
       });
     }
-    
-const backgroundImage = new Image();
-backgroundImage.src = 'https://raw.githubusercontent.com/michaellokalamrketing/tetris/main/canvas.png';
 
-backgroundImage.onload = () => {
-  draw(); // zavolá se poprvé, až když je obrázek načtený
-};
-
-function draw() {
-  ctx.drawImage(backgroundImage, 0, 0, 10, 20);
-  drawMatrix(arena, { x: 0, y: 0 });
-  drawMatrix(player.matrix, player.pos);
-}
-
-
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(backgroundImage, 0, 0, 10, 20);
+      drawMatrix(arena, { x: 0, y: 0 });
+      drawMatrix(player.matrix, player.pos);
+    }
 
     function merge(arena, player) {
       player.matrix.forEach((row, y) => {
@@ -188,8 +188,7 @@ function draw() {
       const o = player.pos;
       for (let y = 0; y < m.length; ++y) {
         for (let x = 0; x < m[y].length; ++x) {
-          if (m[y][x] !== 0 &&
-              (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+          if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
             return true;
           }
         }
@@ -305,37 +304,35 @@ function draw() {
       animationFrame = requestAnimationFrame(update);
     }
 
-   function startGame() {
-  cancelAnimationFrame(animationFrame);
-  const selectedSpeed = document.getElementById('level').value;
-  dropInterval = parseInt(selectedSpeed);
-  arena = createMatrix(arenaWidth, arenaHeight);
-  score = 0;
-  updateScore();
-  document.getElementById('game-over').style.display = 'none';
-  gameRunning = true;
-  playerReset();
-  update();
-}
+    function startGame() {
+      cancelAnimationFrame(animationFrame);
+      const selectedSpeed = document.getElementById('level').value;
+      dropInterval = parseInt(selectedSpeed);
+      arena = createMatrix(arenaWidth, arenaHeight);
+      score = 0;
+      updateScore();
+      document.getElementById('game-over').style.display = 'none';
+      gameRunning = true;
+      playerReset();
+      update();
+    }
 
-// 👇 TADY PŘIDEJ TOTO
-window.startGame = startGame;
+    window.startGame = startGame;
 
-document.addEventListener('keydown', event => {
-  if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
-    event.preventDefault();
-  }
+    document.addEventListener('keydown', event => {
+      if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+        event.preventDefault();
+      }
 
-  if (!gameRunning) return;
+      if (!gameRunning) return;
 
-  if (event.key === 'ArrowLeft') playerMove(-1);
-  else if (event.key === 'ArrowRight') playerMove(1);
-  else if (event.key === 'ArrowDown') playerDrop();
-  else if (event.key === 'ArrowUp') playerRotate();
-});
+      if (event.key === 'ArrowLeft') playerMove(-1);
+      else if (event.key === 'ArrowRight') playerMove(1);
+      else if (event.key === 'ArrowDown') playerDrop();
+      else if (event.key === 'ArrowUp') playerRotate();
+    });
 
-loadTopScores();
-
+    loadTopScores();
   </script>
 </body>
 </html>
