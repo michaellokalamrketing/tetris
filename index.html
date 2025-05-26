@@ -87,16 +87,41 @@
       });
     }
 
-    function loadTopScores() {
-      const scoresRef = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(5));
-      get(scoresRef).then((snapshot) => {
-        const entries = [];
-        snapshot.forEach((child) => entries.push(child.val()));
-        entries.sort((a, b) => b.score - a.score);
-        const listHtml = entries.map(e => `<li>${e.name} – ${e.score} bodů</li>`).join('');
-        document.getElementById('leaderboard').innerHTML = `<ul>${listHtml}</ul>`;
+  function loadTopScores() {
+  const scoresRef = query(ref(db, 'leaderboard'), orderByChild('score'), limitToLast(5));
+  get(scoresRef)
+    .then((snapshot) => {
+      const leaderboardEl = document.getElementById('leaderboard');
+
+      if (!snapshot.exists()) {
+        leaderboardEl.innerHTML += '<p>Žádná skóre zatím nejsou.</p>';
+        return;
+      }
+
+      const entries = [];
+      snapshot.forEach((child) => {
+        const data = child.val();
+        // kontrola, že data obsahují jméno a skóre
+        if (data && data.name && typeof data.score === 'number') {
+          entries.push(data);
+        }
       });
-    }
+
+      if (entries.length === 0) {
+        leaderboardEl.innerHTML += '<p>Zatím bez výsledků.</p>';
+        return;
+      }
+
+      entries.sort((a, b) => b.score - a.score);
+
+      const listHtml = entries.map(e => `<li>${e.name} – ${e.score} bodů</li>`).join('');
+      leaderboardEl.innerHTML = `<h3>TOP hráči</h3><ul>${listHtml}</ul>`;
+    })
+    .catch((error) => {
+      console.error("Chyba při načítání leaderboardu:", error);
+      document.getElementById('leaderboard').innerHTML += '<p>Chyba při načítání skóre.</p>';
+    });
+}
 
     // TETRIS LOGIKA
     const canvas = document.getElementById('tetris');
