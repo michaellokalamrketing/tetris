@@ -161,15 +161,12 @@
 const backgroundImage = new Image();
 backgroundImage.src = 'https://raw.githubusercontent.com/michaellokalamrketing/tetris/main/canvas.png';
 
-  function draw() {
-  if (backgroundImage.complete && backgroundImage.naturalWidth > 0) {
-    ctx.drawImage(backgroundImage, 0, 0, 10, 20);
+backgroundImage.onload = () => {
+  draw(); // zavolá se poprvé, až když je obrázek načtený
+};
 
-  } else {
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
+function draw() {
+  ctx.drawImage(backgroundImage, 0, 0, 10, 20);
   drawMatrix(arena, { x: 0, y: 0 });
   drawMatrix(player.matrix, player.pos);
 }
