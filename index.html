@@ -157,13 +157,12 @@
         });
       });
     }
+    
+const backgroundImage = new Image();
+backgroundImage.src = 'https://raw.githubusercontent.com/michaellokalamrketing/tetris/main/canvas.png';
 
-    const backgroundImage = new Image();
-backgroundImage.src = './canvas.png'; // nebo absolutní URL z GitHub Pages
-
-
-   function draw() {
-  if (backgroundImage.complete && backgroundImage.naturalWidth !== 0) {
+  function draw() {
+  if (backgroundImage.complete && backgroundImage.naturalWidth > 0) {
     ctx.drawImage(backgroundImage, 0, 0, canvas.width / 30, canvas.height / 30);
   } else {
     ctx.fillStyle = '#000';
@@ -173,6 +172,7 @@ backgroundImage.src = './canvas.png'; // nebo absolutní URL z GitHub Pages
   drawMatrix(arena, { x: 0, y: 0 });
   drawMatrix(player.matrix, player.pos);
 }
+
 
 
     function merge(arena, player) {
