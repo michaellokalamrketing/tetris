@@ -7,6 +7,8 @@
     body {
       margin: 0;
       padding: 0;
+      background: #0a0a0a;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -119,30 +121,25 @@
 </head>
 <body>
   <canvas id="tetris" width="300" height="600"></canvas>
-
-  <button id="start-button" onclick="startGame()">Start hry</button>
-
+  <button id="start-button">Start hry</button>
   <div id="score">Skóre: 0</div>
-
   <div id="mobile-controls">
-    <button class="control-button" onclick="playerMove(-1)"><img src="https://img.icons8.com/ios-filled/50/arrow-pointing-left.png" alt="Doleva"></button>
-    <button class="control-button" onclick="playerRotate()"><img src="https://img.icons8.com/ios-filled/50/rotate-right.png" alt="Rotace"></button>
-    <button class="control-button" onclick="playerMove(1)"><img src="https://img.icons8.com/ios-filled/50/arrow-pointing-right.png" alt="Doprava"></button>
+    <button class="control-button" id="btn-left"><img src="https://img.icons8.com/ios-filled/50/arrow-pointing-left.png" alt="Doleva"></button>
+    <button class="control-button" id="btn-rotate"><img src="https://img.icons8.com/ios-filled/50/rotate-right.png" alt="Rotace"></button>
+    <button class="control-button" id="btn-right"><img src="https://img.icons8.com/ios-filled/50/arrow-pointing-right.png" alt="Doprava"></button>
   </div>
-
   <div id="game-over">
-    <p>Je nám lítý, ale je konec hry.</p>
+    <p>Je nám líto, ale je konec hry.</p>
     <p>Jako odměnu pro Vás máme slevu <strong>15 %</strong> na náš e-shop.</p>
     <p>Stačí zadat slevový kód: <strong style="color:#00ffcc;">TETRIS15</strong></p>
   </div>
-
   <div id="leaderboard">
     <h3>TOP 5 Hráči</h3>
     <p>Načítám...</p>
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
     import { getDatabase, ref, push, set, query, orderByChild, limitToLast, get } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
 
     const firebaseConfig = {
@@ -389,35 +386,46 @@
       animationFrame = requestAnimationFrame(update);
     }
 
-    function startGame() {
-      cancelAnimationFrame(animationFrame);
-      const selectedSpeed = document.getElementById('level').value;
-      dropInterval = parseInt(selectedSpeed);
-      arena = createMatrix(arenaWidth, arenaHeight);
-      score = 0;
-      updateScore();
-      document.getElementById('game-over').style.display = 'none';
-      gameRunning = true;
-      playerReset();
-      update();
-    }
+   function startGame() {
+  cancelAnimationFrame(animationFrame);
+  dropInterval = 500; // pevná rychlost hry
+  arena = createMatrix(arenaWidth, arenaHeight);
+  score = 0;
+  updateScore();
+  document.getElementById('game-over').style.display = 'none';
+  gameRunning = true;
+  playerReset();
+  update();
+}
 
-    window.startGame = startGame;
+window.startGame = startGame;
 
-    document.addEventListener('keydown', event => {
-      if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
-        event.preventDefault();
-      }
+document.addEventListener('keydown', event => {
+  if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(event.key)) {
+    event.preventDefault();
+  }
 
-      if (!gameRunning) return;
+  if (!gameRunning) return;
 
-      if (event.key === 'ArrowLeft') playerMove(-1);
-      else if (event.key === 'ArrowRight') playerMove(1);
-      else if (event.key === 'ArrowDown') playerDrop();
-      else if (event.key === 'ArrowUp') playerRotate();
-    });
+  if (event.key === 'ArrowLeft') playerMove(-1);
+  else if (event.key === 'ArrowRight') playerMove(1);
+  else if (event.key === 'ArrowDown') playerDrop();
+  else if (event.key === 'ArrowUp') playerRotate();
+});
 
-    loadTopScores();
+loadTopScores();
+
+// Globální napojení
+window.startGame = startGame;
+window.playerMove = playerMove;
+window.playerRotate = playerRotate;
+
+// Ovládací tlačítka
+document.getElementById("btn-left").addEventListener("click", () => playerMove(-1));
+document.getElementById("btn-right").addEventListener("click", () => playerMove(1));
+document.getElementById("btn-rotate").addEventListener("click", () => playerRotate());
+document.getElementById("start-button").addEventListener("click", () => startGame());
+
   </script>
 </body>
 </html>
