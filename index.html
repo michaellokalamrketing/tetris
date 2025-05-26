@@ -166,12 +166,13 @@
       });
     }
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(backgroundImage, 0, 0, 10, 20);
-      drawMatrix(arena, { x: 0, y: 0 });
-      drawMatrix(player.matrix, player.pos);
-    }
+   function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(backgroundImage, 0, 0, arenaWidth, arenaHeight); // zobrazí pozadí přes celý canvas
+  drawMatrix(arena, { x: 0, y: 0 });
+  drawMatrix(player.matrix, player.pos);
+}
+
 
     function merge(arena, player) {
       player.matrix.forEach((row, y) => {
