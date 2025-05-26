@@ -163,7 +163,8 @@ backgroundImage.src = 'https://raw.githubusercontent.com/michaellokalamrketing/t
 
   function draw() {
   if (backgroundImage.complete && backgroundImage.naturalWidth > 0) {
-    ctx.drawImage(backgroundImage, 0, 0, canvas.width / 30, canvas.height / 30);
+    ctx.drawImage(backgroundImage, 0, 0, 10, 20);
+
   } else {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
